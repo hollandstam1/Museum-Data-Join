@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="generator" content="quarto-0.3.17">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Museum Data Join</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+
+  <script src="Museum Data Join_files/libs/clipboard/clipboard.min.js"></script>
+  <script src="Museum Data Join_files/libs/quarto-html/quarto.js"></script>
+  <script src="Museum Data Join_files/libs/quarto-html/popper.min.js"></script>
+  <script src="Museum Data Join_files/libs/quarto-html/tippy.umd.min.js"></script>
+  <script src="Museum Data Join_files/libs/quarto-html/anchor.min.js"></script>
+  <link href="Museum Data Join_files/libs/quarto-html/tippy.css" rel="stylesheet">
+  <link href="Museum Data Join_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+  <script src="Museum Data Join_files/libs/bootstrap/bootstrap.min.js"></script>
+  <link href="Museum Data Join_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+  <link href="Museum Data Join_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div id="quarto-content" class="container-fluid page-layout-article">
+<div class="page-columns">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <div id="quarto-toc-target"></div>
+</div>
+<main class="content">
+<header id="title-block-header">
+<h1 class="title display-7">Museum Data Join</h1>
+<p class="date">02.01.2022</p>
+</header>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stderr">
+<pre><code>Warning in system("timedatectl", intern = TRUE): running command 'timedatectl'
+had status 1</code></pre>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>gardner <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/gardner.csv"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#loadjanson</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>janson <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/janson.csv"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#loadMoMA</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>moma <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/moma.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, see `problems()` for details</code></pre>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#loadCountMoMAExh</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>countmoma <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/countmoma.csv"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#loadWhitney</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>whitney <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/whitney.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>join gardner and janson with column = book, janson, gardner</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>janson <span class="ot">&lt;-</span> janson <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">ArtistNationalityOther =</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">case_when</span>((ArtistNationality <span class="sc">!=</span> <span class="st">"French"</span>) <span class="sc">&amp;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"American"</span>) <span class="sc">&amp;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"German"</span>) <span class="sc">&amp;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"Spanish"</span>) <span class="sc">&amp;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"British"</span>) </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                                          <span class="sc">~</span> <span class="st">"Other"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"French"</span> <span class="sc">~</span> <span class="st">"French"</span>),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"British"</span> <span class="sc">~</span> <span class="st">"British"</span>),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"American"</span> <span class="sc">~</span> <span class="st">"American"</span>),</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"Spanish"</span> <span class="sc">~</span> <span class="st">"Spanish"</span>),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"German"</span> <span class="sc">~</span> <span class="st">"German"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"ArtistName"</span>, </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EditionNumber"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"YearofPublication"</span>, </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistUniqueID"</span>, </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistNationality"</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistNationalityOther"</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistGender"</span>, </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistRace"</span>, </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistEthnicity"</span>, </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Book"</span>, </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SpaceRatioPerPage"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gardner <span class="ot">&lt;-</span> gardner <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">ArtistNationalityOther =</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">case_when</span>((ArtistNationality <span class="sc">!=</span> <span class="st">"French"</span>) <span class="sc">&amp;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"American"</span>) <span class="sc">&amp;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"German"</span>) <span class="sc">&amp;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"Spanish"</span>) <span class="sc">&amp;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                       (ArtistNationality <span class="sc">!=</span> <span class="st">"British"</span>) </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                                          <span class="sc">~</span> <span class="st">"Other"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"French"</span> <span class="sc">~</span> <span class="st">"French"</span>),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"British"</span> <span class="sc">~</span> <span class="st">"British"</span>),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"American"</span> <span class="sc">~</span> <span class="st">"American"</span>),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"Spanish"</span> <span class="sc">~</span> <span class="st">"Spanish"</span>),</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>             (ArtistNationality <span class="sc">==</span> <span class="st">"German"</span> <span class="sc">~</span> <span class="st">"German"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"ArtistName"</span>, </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EditionNumber"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"YearofPublication"</span>, </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistUniqueID"</span>, </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistNationality"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistNationalityOther"</span>,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistGender"</span>, </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistRace"</span>, </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistEthnicity"</span>, </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Book"</span>, </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SpaceRatioPerPage"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gardnerjanson <span class="ot">&lt;-</span> gardner <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(janson, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"ArtistName"</span>, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"EditionNumber"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"YearofPublication"</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"ArtistUniqueID"</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"ArtistNationality"</span>, </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"ArtistNationalityOther"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"ArtistGender"</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"ArtistRace"</span>, </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"ArtistEthnicity"</span>, </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"Book"</span>, </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"SpaceRatioPerPage"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"ArtistName"</span>, </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EditionNumber"</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"YearofPublication"</span>, </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistUniqueID"</span>, </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistNationality"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistNationalityOther"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistGender"</span>, </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistRace"</span>, </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ArtistEthnicity"</span>, </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Book"</span>, </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SpaceRatioPerPage"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>countmomacleanNA</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>countmoma <span class="ot">&lt;-</span> countmoma <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">TotalAreaText(cm^2)</span><span class="st">`</span><span class="sc">!=</span> <span class="st">"NA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>join gardnerjanson with MoMA through antijoin - showing gardnerjanson that is NOT in MoMA - compare directly with moma?</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>momagardnerjanson <span class="ot">&lt;-</span> gardnerjanson <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(moma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stderr">
+<pre><code>Joining, by = "ArtistName"</code></pre>
+</div>
+</div>
+<p>clean artist name manually using gardnerjanson name</p>
+<div class="cell">
+<div class="sourceCode" id="cb12"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>whitneygardnerjanson <span class="ot">&lt;-</span> gardnerjanson <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(whitney)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stderr">
+<pre><code>Joining, by = "ArtistName"</code></pre>
+</div>
+</div>
+<p>join gardnerjansonMoMa with Whitney through antijoin</p>
+<p>EDA: Bivariate Plots and MLR with SpaceRation</p>
+<p>Janson:</p>
+<p>SpaceRatioPerPage with Gender</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(janson, <span class="fu">aes</span>(<span class="at">x=</span>ArtistGender, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Janson by Gender"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Gender"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/genderjanson-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>SpaceRatioPerPage with Race</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(janson, <span class="fu">aes</span>(<span class="at">x=</span>ArtistRace, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Janson by Race"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Race"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/racejanson-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>SpaceRatioPerPage with Ethnicity</p>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(janson, <span class="fu">aes</span>(<span class="at">x=</span>ArtistEthnicity, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Janson by Ethnicity"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Ethnicity"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/jansonethnicity-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>SpaceRatioPerPage with Nationality</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(janson, <span class="fu">aes</span>(<span class="at">x=</span>ArtistNationalityOther, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Janson by Nationality"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Nationality"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/jansonnationality-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>MLR of Janson with Gender +Race + Nationality + Ethnicity ~ SpaceRatioPerPage</p>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>jansonMLR <span class="ot">=</span> <span class="fu">lm</span>(SpaceRatioPerPage <span class="sc">~</span> ArtistRace <span class="sc">+</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                         ArtistEthnicity <span class="sc">+</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                         ArtistGender <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                         ArtistNationalityOther, </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> janson)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(jansonMLR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = SpaceRatioPerPage ~ ArtistRace + ArtistEthnicity + 
+    ArtistGender + ArtistNationalityOther, data = janson)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.31271 -0.13922 -0.05374  0.09048  0.92620 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)                            0.374224   0.150961   2.479  0.01328 * 
+ArtistRaceAsian                       -0.117036   0.201165  -0.582  0.56079   
+ArtistRaceBlack or African American   -0.071217   0.147590  -0.483  0.62949   
+ArtistRaceWhite                       -0.039936   0.142574  -0.280  0.77943   
+ArtistEthnicityNot Hispanic or Latinx  0.016095   0.053113   0.303  0.76191   
+ArtistGenderMale                       0.034123   0.019702   1.732  0.08347 . 
+ArtistNationalityOtherBritish          0.009622   0.019843   0.485  0.62781   
+ArtistNationalityOtherFrench           0.037112   0.014081   2.636  0.00848 **
+ArtistNationalityOtherGerman          -0.032213   0.020465  -1.574  0.11567   
+ArtistNationalityOtherOther            0.009929   0.016216   0.612  0.54042   
+ArtistNationalityOtherSpanish          0.055779   0.057727   0.966  0.33406   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1998 on 1623 degrees of freedom
+Multiple R-squared:  0.01582,   Adjusted R-squared:  0.009756 
+F-statistic: 2.609 on 10 and 1623 DF,  p-value: 0.003815</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(jansonMLR)<span class="sc">$</span>r.squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.01582008</code></pre>
+</div>
+</div>
+<p>Gardner:</p>
+<p>SpaceRatioPerPage vs Gender</p>
+<div class="cell">
+<div class="sourceCode" id="cb22"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gardner, <span class="fu">aes</span>(<span class="at">x=</span>ArtistGender, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Garder by Gender"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Gender"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/gardnergender-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>SpaceRatioPerPage vs Race</p>
+<div class="cell">
+<div class="sourceCode" id="cb23"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gardner, <span class="fu">aes</span>(<span class="at">x=</span>ArtistRace, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Gardner by Race"</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Race"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)<span class="sc">+</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">size =</span> <span class="dv">5</span>))<span class="sc">+</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="fl">2.0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/gardnerrace-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>SpaceRatioPerPage vs Ethnicity</p>
+<div class="cell">
+<div class="sourceCode" id="cb24"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gardner, <span class="fu">aes</span>(<span class="at">x=</span>ArtistEthnicity, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Gardner by Ethnicity"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Ethnicity"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/gardnerethnicity-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>SpaceRatioPerPage vs Nationality</p>
+<div class="cell">
+<div class="sourceCode" id="cb25"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gardner, <span class="fu">aes</span>(<span class="at">x=</span>ArtistNationalityOther, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ratio of Space per Page per Artist per Edition in </span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="st">       Gardner by Nationality"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Nationality"</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Ratio of Space per Page"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Museum-Data-Join_files/figure-html/gardnernationality-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>GardnerMLR Demographic</p>
+<div class="cell">
+<div class="sourceCode" id="cb26"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>gardnerMLR <span class="ot">=</span> <span class="fu">lm</span>(SpaceRatioPerPage <span class="sc">~</span> ArtistRace <span class="sc">+</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                         ArtistEthnicity <span class="sc">+</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                         ArtistGender <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                         ArtistNationalityOther, </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> gardner)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gardnerMLR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = SpaceRatioPerPage ~ ArtistRace + ArtistEthnicity + 
+    ArtistGender + ArtistNationalityOther, data = gardner)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.29932 -0.11570 -0.02877  0.07996  1.13259 
+
+Coefficients:
+                                                     Estimate Std. Error
+(Intercept)                                          0.390115   0.067701
+ArtistRaceAsian                                     -0.075043   0.064462
+ArtistRaceBlack or African American                 -0.017477   0.066661
+ArtistRaceN/A                                       -0.176906   0.065426
+ArtistRaceNative American                            0.043750   0.128366
+ArtistRaceNative Hawaiian or Other Pacific Islander -0.077603   0.069766
+ArtistRaceWhite                                     -0.028954   0.063398
+ArtistEthnicityN/A                                  -0.099649   0.081621
+ArtistEthnicityNot Hispanic or Latinx                0.006244   0.024082
+ArtistGenderMale                                     0.047395   0.011969
+ArtistGenderN/A                                      0.220984   0.080699
+ArtistNationalityOtherBritish                        0.035721   0.013767
+ArtistNationalityOtherFrench                         0.073616   0.009352
+ArtistNationalityOtherGerman                        -0.001911   0.015041
+ArtistNationalityOtherOther                          0.020956   0.011518
+ArtistNationalityOtherSpanish                        0.047444   0.028604
+                                                    t value Pr(&gt;|t|)    
+(Intercept)                                           5.762 9.41e-09 ***
+ArtistRaceAsian                                      -1.164  0.24449    
+ArtistRaceBlack or African American                  -0.262  0.79320    
+ArtistRaceN/A                                        -2.704  0.00690 ** 
+ArtistRaceNative American                             0.341  0.73327    
+ArtistRaceNative Hawaiian or Other Pacific Islander  -1.112  0.26611    
+ArtistRaceWhite                                      -0.457  0.64793    
+ArtistEthnicityN/A                                   -1.221  0.22226    
+ArtistEthnicityNot Hispanic or Latinx                 0.259  0.79544    
+ArtistGenderMale                                      3.960 7.73e-05 ***
+ArtistGenderN/A                                       2.738  0.00622 ** 
+ArtistNationalityOtherBritish                         2.595  0.00953 ** 
+ArtistNationalityOtherFrench                          7.872 5.35e-15 ***
+ArtistNationalityOtherGerman                         -0.127  0.89891    
+ArtistNationalityOtherOther                           1.819  0.06897 .  
+ArtistNationalityOtherSpanish                         1.659  0.09733 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1613 on 2293 degrees of freedom
+Multiple R-squared:  0.05799,   Adjusted R-squared:  0.05182 
+F-statistic:  9.41 on 15 and 2293 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb28"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(gardnerMLR)<span class="sc">$</span>r.squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.05798555</code></pre>
+</div>
+</div>
+<p>MLR demograpic with jansongardner</p>
+<div class="cell">
+<div class="sourceCode" id="cb30"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>gardnerjansonMLR <span class="ot">=</span> <span class="fu">lm</span>(SpaceRatioPerPage <span class="sc">~</span> ArtistRace <span class="sc">+</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                         ArtistEthnicity <span class="sc">+</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                         ArtistGender <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                         ArtistNationalityOther, </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> gardnerjanson)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gardnerjansonMLR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = SpaceRatioPerPage ~ ArtistRace + ArtistEthnicity + 
+    ArtistGender + ArtistNationalityOther, data = gardnerjanson)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.34846 -0.12715 -0.03601  0.08771  1.14634 
+
+Coefficients:
+                                                     Estimate Std. Error
+(Intercept)                                          0.400250   0.065723
+ArtistRaceAsian                                     -0.065998   0.063428
+ArtistRaceBlack or African American                 -0.036396   0.064592
+ArtistRaceN/A                                       -0.170802   0.067267
+ArtistRaceNative American                            0.050992   0.140486
+ArtistRaceNative Hawaiian or Other Pacific Islander -0.070946   0.072016
+ArtistRaceWhite                                     -0.036629   0.061791
+ArtistEthnicityN/A                                  -0.107770   0.089752
+ArtistEthnicityNot Hispanic or Latinx               -0.001293   0.023126
+ArtistGenderMale                                     0.038842   0.010615
+ArtistGenderN/A                                      0.218075   0.089479
+ArtistNationalityOtherBritish                        0.024296   0.011614
+ArtistNationalityOtherFrench                         0.059525   0.008038
+ArtistNationalityOtherGerman                        -0.017297   0.012367
+ArtistNationalityOtherOther                          0.014608   0.009599
+ArtistNationalityOtherSpanish                        0.039785   0.026600
+                                                    t value Pr(&gt;|t|)    
+(Intercept)                                           6.090 1.24e-09 ***
+ArtistRaceAsian                                      -1.041 0.298158    
+ArtistRaceBlack or African American                  -0.563 0.573145    
+ArtistRaceN/A                                        -2.539 0.011150 *  
+ArtistRaceNative American                             0.363 0.716647    
+ArtistRaceNative Hawaiian or Other Pacific Islander  -0.985 0.324619    
+ArtistRaceWhite                                      -0.593 0.553356    
+ArtistEthnicityN/A                                   -1.201 0.229922    
+ArtistEthnicityNot Hispanic or Latinx                -0.056 0.955432    
+ArtistGenderMale                                      3.659 0.000256 ***
+ArtistGenderN/A                                       2.437 0.014847 *  
+ArtistNationalityOtherBritish                         2.092 0.036506 *  
+ArtistNationalityOtherFrench                          7.405 1.59e-13 ***
+ArtistNationalityOtherGerman                         -1.399 0.162021    
+ArtistNationalityOtherOther                           1.522 0.128137    
+ArtistNationalityOtherSpanish                         1.496 0.134823    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1799 on 3927 degrees of freedom
+Multiple R-squared:  0.0328,    Adjusted R-squared:  0.02911 
+F-statistic: 8.879 on 15 and 3927 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb32"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(gardnerjansonMLR)<span class="sc">$</span>r.squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.03280149</code></pre>
+</div>
+</div>
+</main>
+<!-- /main column -->
+<script type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    setTimeout(function() {
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /grid -->
+</div> <!-- /content -->
+
+
+</body></html>
