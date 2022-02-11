@@ -341,14 +341,39 @@ glance(gardnerjansonMLR)$r.squared
 
 whitney eda
 
-```{r whitneyeda}
+```{r whitneycounttodate}
+ggplot(whitneygardnerjanson, aes(x = count_to_date))+
+  geom_histogram()+
+  labs(title = "Distribution of Whitney Exhibitions per Artist per Edition",
+       x = "Count to Date",
+       y = "Count")
+
+```
+
+```{r whitneyvisual}
 ggplot(whitneygardnerjanson, aes(x = count_to_date, y = SpaceRatioPerPage))+
-  geom_point()
+  geom_point()+
+  labs(title = "Ratio of Space Per Artist Per Edition by 
+       Number of Exhibitions per Artist per Editions in the Whitney", 
+       x = "Count to Date",
+       y = "Ratio of Space Per Artist Per Edition")
 ```
 
 moma eda
 
-```{r momaeda}
+```{r momacounttodate}
+ggplot(momagardnerjanson, aes(x = count_to_date))+
+  geom_histogram()+
+  labs(title = "Distribution of MoMA Exhibitions per Artist per Edition",
+       x = "Count to Date",
+       y = "Count")
+```
+
+```{r momavisual}
 ggplot(momagardnerjanson, aes(x = count_to_date, y = SpaceRatioPerPage))+
-  geom_point()
+  geom_point()+
+  labs(title = "Ratio of Space Per Artist Per Edition by 
+       Number of Exhibitions per Artist per Editions in the MoMA", 
+       x = "Count to Date",
+       y = "Ratio of Space Per Artist Per Edition")
 ```
