@@ -1,7 +1,7 @@
 ---
 title: "Museum Data Join"
 name: "Holland Stam"
-date: "02.01.2022"
+date: "02.14.2022"
 ---
 
 ```{r load-pkg-data}
@@ -371,7 +371,7 @@ ggplot(gardner, aes(x=ArtistRace, y= SpaceRatioPerPage))+
   ylim(0, 2.0)
 ```
 
-What sticks out like a sore thumb in the visualization above is the significant number of outlying white artists.
+What sticks out like a sore thumb in the visualization above is the significant number of outlying white artists. The only artists that have a `SpaceRatioPerPage` of 1 or more are white. Though all the medians of race range between .25 and .6,
 
 ```{r gardnerethnicity}
 ggplot(gardner, aes(x=ArtistEthnicity, y= SpaceRatioPerPage))+

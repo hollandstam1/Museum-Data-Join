@@ -99,7 +99,7 @@
 <main class="content">
 <header id="title-block-header">
 <h1 class="title display-7">Museum Data Join</h1>
-<p class="date">02.01.2022</p>
+<p class="date">02.14.2022</p>
 </header>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -670,7 +670,7 @@ F-statistic: 30.04 on 10 and 1208 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p><img src="MuseumDataJoin_files/figure-html/gardnerrace-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>What sticks out like a sore thumb in the visualization above is the significant number of outlying white artists.</p>
+<p>What sticks out like a sore thumb in the visualization above is the significant number of outlying white artists. The only artists that have a <code>SpaceRatioPerPage</code> of 1 or more are white. Though all the medians of race range between .25 and .6,</p>
 <div class="cell">
 <div class="sourceCode" id="cb86"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gardner, <span class="fu">aes</span>(<span class="at">x=</span>ArtistEthnicity, <span class="at">y=</span> SpaceRatioPerPage))<span class="sc">+</span></span>
 <span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
