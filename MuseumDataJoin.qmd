@@ -343,9 +343,13 @@ gardner_male <- gardner %>%
 
 median(gardner_male$SpaceRatioPerPage)
 
-gardner_male1 <- garder_male %>%
+gardner_male1 <- gardner_male %>%
   filter(SpaceRatioPerPage > 1)%>%
-  select(ArtistName, ArtistGender, EditionNumber, Year, SpaceRatioPerPage)%>%
+  select(ArtistName, 
+         ArtistGender, 
+         EditionNumber, 
+         Year, 
+         SpaceRatioPerPage)%>%
   arrange(desc(SpaceRatioPerPage))
 
 gardner_NAgender <- gardner %>%
@@ -354,7 +358,7 @@ gardner_NAgender <- gardner %>%
 median(gardner_NAgender$SpaceRatioPerPage)
 ```
 
-The median `SpaceRatioPerPage` for female artists is `r round(median(janson_female$SpaceRatioPerPage), 3)` is below the median for artists whose gender is unknown, `r median(gardner_NAgender$SpaceRatioPerPage)`, as well as the median for male artists `r round(median(janson_male$SpaceRatioPerPage), 3)` in *Gardner's Art Through the Ages.* The number of artists whose gender is unknown has the fewest observations, `r nrow(janson_NAgender)`, the number of female artists is slightly greater, `r nrow(janson_female)`, and the amount of male artists through editions is, `r nrow(janson_male)`. The only female artist that comes close to being larger than 1 for `SpaceRatioPerPage` is again Hannah Hoch, as seen by the table above. Male artists have a dramatic amount of outlying artists through editions over a `SpaceRatioPerPage` of 1, `r nrow(gardner_male1)`.
+The median `SpaceRatioPerPage` for female artists is `r round(median(janson_female$SpaceRatioPerPage), 3)` is below the median for artists whose gender is unknown, `r median(gardner_NAgender$SpaceRatioPerPage)`, as well as the median for male artists `r round(median(gardner_male$SpaceRatioPerPage), 3)` in *Gardner's Art Through the Ages.* The number of artists whose gender is unknown has the fewest observations, `r nrow(gardner_NAgender)`, the number of female artists is slightly greater, `r nrow(gardner_female)`, and the amount of male artists through editions is, `r nrow(gardner_male)`. The only female artist that comes close to being larger than 1 for `SpaceRatioPerPage` is again Hannah Hoch, as seen by the table above. Male artists have a dramatic amount of outlying artists through editions over a `SpaceRatioPerPage` of 1, `r nrow(gardner_male1)`.
 
 ```{r gardnerrace}
 ggplot(gardner, aes(x=ArtistRace, y= SpaceRatioPerPage))+
