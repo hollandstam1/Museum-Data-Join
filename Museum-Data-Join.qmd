@@ -39,11 +39,7 @@ janson <- janson %>%
              (ArtistNationality == "German" ~ "German"))) %>%
   select("ArtistName", 
         "EditionNumber",
-<<<<<<< HEAD
-        "Year", 
-=======
-        "YearofPublication", 
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
+        "Year",
         "ArtistUniqueID", 
         "ArtistNationality",
         "ArtistNationalityOther",
@@ -70,11 +66,7 @@ gardner <- gardner %>%
              (ArtistNationality == "German" ~ "German"))) %>%
   select("ArtistName", 
         "EditionNumber",
-<<<<<<< HEAD
         "Year", 
-=======
-        "YearofPublication", 
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
         "ArtistUniqueID", 
         "ArtistNationality",
         "ArtistNationalityOther",
@@ -89,11 +81,7 @@ gardner <- gardner %>%
 gardnerjanson <- gardner %>%
   full_join(janson, by = c("ArtistName", 
                            "EditionNumber",
-<<<<<<< HEAD
-                           "Year", 
-=======
-                           "YearofPublication", 
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
+                           "Year",
                            "ArtistUniqueID", 
                            "ArtistNationality", 
                            "ArtistNationalityOther",
@@ -104,11 +92,7 @@ gardnerjanson <- gardner %>%
                            "SpaceRatioPerPage")) %>%
   select("ArtistName", 
         "EditionNumber",
-<<<<<<< HEAD
         "Year", 
-=======
-        "YearofPublication", 
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
         "ArtistUniqueID", 
         "ArtistNationality",
         "ArtistNationalityOther",
@@ -146,15 +130,6 @@ antiwhitneygardnerjanson <- gardnerjanson %>%
 
 join gardnerjansonMoMa with Whitney through antijoin
 
-<<<<<<< HEAD
-arrange(ArtistName, EndYear)%>%
-
-group_by(ArtistName)%>%
-
-mutate(count_to_date = cumsum(count))%>%
-
-select(ArtistName, count_to_date)
-
 ```{r momaexh}
 moma <- moma %>%
   mutate(count = 1)%>%
@@ -162,25 +137,13 @@ moma <- moma %>%
   group_by(ArtistName)%>%
   mutate(count_to_date = cumsum(count))%>%
   select(ArtistName, count_to_date, Year)
-=======
-```{r momaexh}
-moma <- moma %>%
-  mutate(count = 1)%>%
-  arrange(ArtistName, EndYear)%>%
-  group_by(ArtistName)%>%
-  mutate(count_to_date = cumsum(count))%>%
-  select(ArtistName, count_to_date)
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
 ```
 
 ```{r momagarderjanson}
-momagardnerjanson <- gardnerjanson %>%
-<<<<<<< HEAD
-  inner_join(moma, by = "ArtistName", "Year.x")
-=======
-  right_join(moma)
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
-
+momagardnerjanson <- gardnerjanson # %>%
+  ## WHICH OF THESE JOINS TO USE???
+  #inner_join(moma, by = "ArtistName", "Year.x")
+  #right_join(moma)
 ```
 
 ```{r whitneyexh}
@@ -213,18 +176,11 @@ ggplot(janson, aes(x = SpaceRatioPerPage, fill = EditionNumber))+
 
 summary(janson$SpaceRatioPerPage)
 
-<<<<<<< HEAD
-```
-
-The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median and IQR. The median of `SpaceRatioPerPage` in Janson is `median`
-=======
-median(janson$SpaceRatioPerPage)%>%
+median <- median(janson$SpaceRatioPerPage)%>%
   pull()
-
 ```
 
-The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median and IQR. The median of `SpaceRatioPerPage` in Janson is `r median`
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
+The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median and IQR. The median of `SpaceRatioPerPage` in Janson is `r median`.
 
 SpaceRatioPerPage with Gender
 
@@ -307,12 +263,7 @@ SpaceRatioPerPage vs Gender
 ```{r gardnergender}
 ggplot(gardner, aes(x=ArtistGender, y= SpaceRatioPerPage))+
   geom_boxplot()+
-  labs(title = "Ratio of Space per Page per Artist per Edition in 
-<<<<<<< HEAD
-       Gardner by Gender",
-=======
-       Garder by Gender",
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
+  labs(title = "Ratio of Space per Page per Artist per Edition in Gardner by Gender",
        x = "Gender",
        y = "Ratio of Space per Page")
 
@@ -389,7 +340,6 @@ glance(gardnerjansonMLR)$r.squared
 
 whitney eda
 
-<<<<<<< HEAD
 ```{r whitneycounttodate}
 ggplot(whitneygardnerjanson, aes(x = count_to_date))+
   geom_histogram()+
@@ -406,16 +356,10 @@ ggplot(whitneygardnerjanson, aes(x = count_to_date, y = SpaceRatioPerPage))+
        Number of Exhibitions per Artist per Editions in the Whitney", 
        x = "Count to Date",
        y = "Ratio of Space Per Artist Per Edition")
-=======
-```{r whitneyeda}
-ggplot(whitneygardnerjanson, aes(x = count_to_date, y = SpaceRatioPerPage))+
-  geom_point()
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
 ```
 
 moma eda
 
-<<<<<<< HEAD
 ```{r momacounttodate}
 ggplot(momagardnerjanson, aes(x = count_to_date))+
   geom_histogram()+
@@ -431,9 +375,4 @@ ggplot(momagardnerjanson, aes(x = count_to_date, y = SpaceRatioPerPage))+
        Number of Exhibitions per Artist per Editions in the MoMA", 
        x = "Count to Date",
        y = "Ratio of Space Per Artist Per Edition")
-=======
-```{r momaeda}
-ggplot(momagardnerjanson, aes(x = count_to_date, y = SpaceRatioPerPage))+
-  geom_point()
->>>>>>> 08426c4e468ab96beb889994bc8571cfd2a48231
 ```
