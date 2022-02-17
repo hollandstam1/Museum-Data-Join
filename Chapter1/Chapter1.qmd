@@ -1,0 +1,439 @@
+---
+title: "Quantifying Art Historical Narratives"
+author: "Holland Stam"
+date: "April 1st, 2022"
+format: pdf
+---
+
+**Abstract**
+
+My project surveys the development of *Janson's History of Art* across its eight editions as well as *Gardner's Art Through the Ages* through its sixteen editions, looking particularly at the change in artist demographic through time. Additionally, this paper investigates which external variables such as artist gender, ethnicity, race, nationality, number of exhibitions at the Museum of Modern Art and The Whitney, and number of publications on WorldCat, if any, help predict the magnitude of an artist's inclusion in art historical survey texts. I conduct a data analysis to assess the demographic representation of artists through editions of *Janson's History of Art* and *Gardner's Art Through the Ages*, a proxy for the art historical survey. I compare artist demographics through editions of Janson and Gardner. My findings indicate that coverage of minority artists (defined as nonwhite and/or Hispanic or Latinx and/or female) increases across editions of *Janson's History of Art* and *Gardner's Art Through the Ages*, but remains negligible compared to white male non Hispanic or Latinx artists. Moreover, in *Janson's History of Art* through all editions, the percentage of artists who are white is 98.04%, the percentage of artists that are male is 92.47%, and the percentage of artists that are not Hispanic or Latinx is 92.04% (cite). In *Gardner's Art Through the Ages*, through all editions, the percentage of artists who are white is 92.76%, the percentage of artists that are male is 90.47%, and the percentage of artists that are not Hispanic or Latinx is 90.94% (see appendix). Both texts display a narrative of the history of art as being predominantly white, male, non Hispanic or Latinx. Regarding nationality, in Janson, 81.52% of the artists are American, British, French, German and Spanish, which is very similar to Gardner's 79.30% of those five same nationalities (see appendix). HERE I WILL ADD FINDINGS FROM REGRESSION AS WELL AS CONCISE CONCLUSIONS ONCE I FINISH THE STATISTICS SIDE OF MY RESEARCH.
+
+Data Preparation:
+
+```{r load-pkg-data}
+#| echo: false
+#| warning: false
+library(tidyverse)
+library(tidymodels)
+library(knitr)
+
+#loadgardner
+gardner <- read_csv("data/gardner.csv")
+#loadjanson
+janson <- read_csv("data/janson.csv")
+#loadMoMA
+moma <- read_csv("data/moma.csv")
+#loadCountMoMAExh
+countmoma <- read_csv("data/countmoma.csv")
+#loadWhitney
+whitney <- read_csv("data/whitney.csv")
+```
+
+```{r janson}
+#| echo: false
+janson <- janson %>%
+    mutate(ArtistNationalityOther = 
+             case_when((ArtistNationality != "French") &
+                       (ArtistNationality != "American") &
+                       (ArtistNationality != "German") &
+                       (ArtistNationality != "Spanish") &
+                       (ArtistNationality != "British") 
+                                          ~ "Other",
+             (ArtistNationality == "French" ~ "French"),
+             (ArtistNationality == "British" ~ "British"),
+             (ArtistNationality == "American" ~ "American"),
+             (ArtistNationality == "Spanish" ~ "Spanish"),
+             (ArtistNationality == "German" ~ "German"))) %>%
+  group_by(ArtistName, 
+        EditionNumber,
+        Year,
+        ArtistNationalityOther,
+        ArtistGender, 
+        ArtistRace, 
+        ArtistEthnicity, 
+        Book)%>%
+  summarise(SpaceRatioPerPage = sum(SpaceRatioPerPage))%>%
+  ungroup(ArtistName, 
+        EditionNumber,
+        Year,
+        ArtistNationalityOther,
+        ArtistGender, 
+        ArtistRace, 
+        ArtistEthnicity, 
+        Book)
+```
+
+```{r gardner}
+#| echo: false
+gardner <- gardner %>%
+    mutate(ArtistNationalityOther = 
+             case_when((ArtistNationality != "French") &
+                       (ArtistNationality != "American") &
+                       (ArtistNationality != "German") &
+                       (ArtistNationality != "Spanish") &
+                       (ArtistNationality != "British") 
+                                          ~ "Other",
+             (ArtistNationality == "French" ~ "French"),
+             (ArtistNationality == "British" ~ "British"),
+             (ArtistNationality == "American" ~ "American"),
+             (ArtistNationality == "Spanish" ~ "Spanish"),
+             (ArtistNationality == "German" ~ "German"))) %>%
+  group_by(ArtistName, 
+        EditionNumber,
+        Year,
+        ArtistNationalityOther,
+        ArtistGender, 
+        ArtistRace, 
+        ArtistEthnicity, 
+        Book)%>%
+  summarise(SpaceRatioPerPage = sum(SpaceRatioPerPage))%>%
+  ungroup(ArtistName, 
+        EditionNumber,
+        Year,
+        ArtistNationalityOther,
+        ArtistGender, 
+        ArtistRace, 
+        ArtistEthnicity, 
+        Book)
+
+```
+
+```{r gardnerjanson}
+#| echo: false
+gardnerjanson <- gardner %>%
+  full_join(janson, by = c("ArtistName", 
+                           "EditionNumber",
+                           "Year",
+                           "ArtistNationalityOther",
+                           "ArtistGender", 
+                           "ArtistRace", 
+                           "ArtistEthnicity", 
+                           "Book", 
+                           "SpaceRatioPerPage"))
+```
+
+```{r momaexh}
+moma <- moma %>%
+  mutate(count = 1) %>%
+  arrange(ArtistName, Year) %>%
+  group_by(ArtistName) %>%
+  complete(ArtistName, Year = c(min(Year):max(Year))) %>%
+  mutate(
+    count = if_else(is.na(count), 0, count),
+    moma_count_to_date = cumsum(count)
+    )
+```
+
+```{r whitneyexh}
+whitney <- whitney %>%
+  mutate(count = 1) %>%
+  arrange(ArtistName, Year) %>%
+  group_by(ArtistName) %>%
+  complete(ArtistName, Year = c(min(Year):max(Year))) %>%
+  mutate(
+    count = if_else(is.na(count), 0, count),
+    count_to_date = cumsum(count)
+    )
+```
+
+```{r momacountjoin}
+museumgardnerjanson <- gardnerjanson %>%
+  left_join(moma %>% select(ArtistName, Year, count_to_date),
+            by = c("ArtistName", "Year"))%>%
+  mutate(count_to_date = if_else(is.na(count_to_date), 0, count_to_date))%>%
+  rename(moma_count_to_date = count_to_date)%>%
+  left_join(whitney %>% select(ArtistName, Year, count_to_date),
+            by = c("ArtistName", "Year"))%>%
+  mutate(count_to_date = if_else(is.na(count_to_date), 0, count_to_date))%>%
+  rename(whitney_count_to_date = count_to_date)
+
+```
+
+**Data Dictionary:**
+
+Outcome:
+
+`SpaceRatioPerPage` = The area of both the text and the figure of a particular artist in a given edition of *Janson's History of Art* divided by the area of a single page of the respective edition.
+
+Potential Predictors:
+
+`ArtistGender` = The gender of the artist.
+
+`ArtistRace` = The race of the artist.
+
+`ArtistEthnicity` = The ethnicity of the artist.
+
+`ArtistNationalityOther` = The nationality of the artist. Roughly 80% of of the total count of artists through all editions of Janson account for French, Spanish, British, American and German. Therefore, the categorical strings of this variable are French, Spanish, British, American, German and Other.
+
+`WhitneyCount` = The count of exhibitions held by The Whitney of a particular artist at a particular moment of time, as highlighted by `Year`.
+
+`MoMACount` = The count of exhibitions held by the Museum of Modern Art (MoMA) of a particular artist at a particular moment of time, as highlighted by `Year`.
+
+`WorldCatCount` = The count of publications of a particular artist at a particular moment of time, as highlighted by `Year`.
+
+Other variables:
+
+`Year` = The year of publication for a given edition of Janson or Gardner.
+
+`EditionNumber` = The Edition Number of the textbook of their Janson or Gardner.
+
+`Book` = Which book, either Janson or Gardner the particular artist at that particular time was included.
+
+# Exploratory Data Analysis: *Janson's History of Art*, `SpaceRatioPerPage`
+
+Distribution of `SpaceRatioPerPage`
+
+```{r jansoncount}
+#| echo: false
+ggplot(janson, aes(x = SpaceRatioPerPage, fill = EditionNumber))+
+  geom_histogram(binwidth = .1)+
+  labs(title = "Distribution of Ratio of Space 
+       per Artist per Edition per Page in Janson",
+       x = "Ratio of Space per Page",
+       y = "Count")
+
+summary(janson$SpaceRatioPerPage)
+
+median(janson$SpaceRatioPerPage)
+
+IQR(janson$SpaceRatioPerPage)
+```
+
+```{r}
+janson_space <- janson %>%
+  select("ArtistName")
+
+```
+
+The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median to understand its center and IQR to understand its spread. The median of `SpaceRatioPerPage` in Janson is `r round(median(janson$SpaceRatioPerPage), 3)` and the IQR is `r round(IQR(janson$SpaceRatioPerPage), 3)`. There are potential outliers that are over 2.0, meaning the amount of space, area of text and area of figure in text combined is more than just the area of a single page within the respective book of *Janson's History of Art.* It is obvious to observe that Spanish painter, Pablo Picasso dominates space through all editions of Janson.
+
+`SpaceRatioPerPage` vs. `ArtistGender`
+
+```{r genderjanson}
+#| echo: false
+ggplot(janson, aes(x=ArtistGender, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Janson by Gender",
+       x = "Gender",
+       y = "Ratio of Space per Page")
+
+janson_female <- janson %>%
+  filter(ArtistGender == "Female")
+
+janson_female %>%
+  filter(SpaceRatioPerPage > .63)%>%
+  select(ArtistName, ArtistGender, EditionNumber, Year, SpaceRatioPerPage)%>%
+  arrange(desc(SpaceRatioPerPage))
+
+median(janson_female$SpaceRatioPerPage)
+
+janson_male <- janson %>%
+  filter(ArtistGender == "Male")
+
+median(janson_male$SpaceRatioPerPage)
+
+```
+
+Interestingly enough, the median `SpaceRatioPerPage` for female artists is `r round(median(janson_female$SpaceRatioPerPage), 3)`, not far below the median `SpaceRatioPerPage` for male artists, `r round(median(janson_male$SpaceRatioPerPage), 3)` in *Janson's History of Art.* This indicates that even though the number of female artists per edition included is far fewer, `r nrow(janson_female)`, the median amount of space given to women is similar to that as the median amount of space given to male artists per edition, `r nrow(janson_male)`. The only female artist that comes close to being larger than 1 for SpaceRatioPerPage is Hannah Hoch, as seen by the table above.
+
+`SpaceRatioPerPage` vs. `ArtistRace`
+
+```{r racejanson}
+#| echo: false
+ggplot(janson, aes(x=ArtistRace, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Janson by Race",
+       x = "Race",
+       y = "Ratio of Space per Page")
+
+janson %>%
+  filter(ArtistRace == "American Indian or Alaska Native")%>%
+  select(ArtistName, 
+         ArtistGender, 
+         ArtistRace, 
+         EditionNumber, 
+         Year, 
+         SpaceRatioPerPage)
+
+janson %>%
+  filter(ArtistRace == "Asian")%>%
+  select(ArtistName, 
+         ArtistGender, 
+         ArtistRace, 
+         EditionNumber, 
+         Year, 
+         SpaceRatioPerPage)
+
+janson %>%
+  filter(ArtistRace == "Black or African American")%>%
+  select(ArtistName, 
+         ArtistGender, 
+         ArtistRace, 
+         EditionNumber, 
+         Year, 
+         SpaceRatioPerPage)%>%
+  filter(SpaceRatioPerPage > .75)
+
+janson_white <- janson%>%
+  filter(ArtistRace == "White")%>%
+  arrange(desc(SpaceRatioPerPage))
+```
+
+Regarding race, there is only artist for American Indian or Alaska Native, which is Kay Walkingstick in the 5th and 6th Editions and one artist for Asian, Ando Hiroshige in the 7th and 8th Editions. Additionally, there is only one Black or African American artist who has a `SpaceRatioPerPage` that is over .75, William T. Williams in the 3rd Edition. There are myriad white artists per work per edition, `r nrow(janson_white)`, and their space trumps that of the space allotted to nonwhite artists.
+
+`SpaceRatioPerPage` vs. `ArtistEthnicity`
+
+```{r jansonethnicity}
+#| echo: false
+ggplot(janson, aes(x=ArtistEthnicity, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in
+       Janson by Ethnicity",
+       x = "Ethnicity",
+       y = "Ratio of Space per Page")
+
+janson_HL <- janson %>%
+  filter(ArtistEthnicity == "Hispanic or Latinx")
+
+median(janson_HL$SpaceRatioPerPage)
+
+janson_NHL <- janson %>%
+  filter(ArtistEthnicity == "Not Hispanic or Latinx")
+
+median(janson_NHL$SpaceRatioPerPage)
+```
+
+Interestingly, the median `SpaceRatioPerPage` for artists who are Hispanic or Latinx, `r round(median(janson_HL$SpaceRatioPerPage), 3)` is higher than those who are Not Hispanic or Latinx, `r round(median(janson_NHL$SpaceRatioPerPage), 3)`. There are `r nrow(janson_HL)` observations of artists per edition who are Hispanic and Latinx and there are `r nrow(janson_NHL)` observations of artists per edition who are not Hispanic or Latinx. Picasso plays a large role in such, as he is Hispanic or Latinx and is accounting for the outlyingly larger observations for `SpaceRatioPerPage`.
+
+`SpaceRatioPerPage` vs. `ArtistNationalityOther`
+
+```{r jansonnationalityother}
+#| echo: false
+ggplot(janson, aes(x=ArtistNationalityOther, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Janson by Nationality",
+       x = "Nationality",
+       y = "Ratio of Space per Page")
+```
+
+# Exploratory Data Analysis: *Gardner's Art Through the Ages*, `SpaceRatioPerPage`
+
+Distribution of `SpaceRatioPerPage`
+
+```{r countgardner}
+#| echo: false
+ggplot(gardner, aes(x = SpaceRatioPerPage))+
+  geom_histogram(binwidth = .1)+
+  labs(title = "Distribution of Ratio of Space 
+       per Artist per Edition per Page in Gardner",
+       x = "Ratio of Space per Page",
+       y = "Count")
+
+summary(gardner$SpaceRatioPerPage)
+
+median(gardner$SpaceRatioPerPage)
+
+IQR(gardner$SpaceRatioPerPage)
+
+gardner%>%
+  arrange(desc(SpaceRatioPerPage))%>%
+  select(ArtistName, EditionNumber, Year, SpaceRatioPerPage)%>%
+  filter(SpaceRatioPerPage >= 2)
+```
+
+The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median to understand its center and IQR to understand its spread. The median of `SpaceRatioPerPage` in Gardner is `r round(median(gardner$SpaceRatioPerPage), 3)` and the IQR is `r round(IQR(gardner$SpaceRatioPerPage), 3)`. There are potential outliers that are over 2.0, meaning the amount of space, area of text and area of figure in text combined is more than just the area of a single page within the respective book of *Gardner's Art Through the Ages.* It is obvious to observe that Spanish painter, Pablo Picasso dominates space through Gardner's, similarly as he did in *Janson's History of Art,* but he has more company this time around. French painters such as Delacroix and Jacques-Louis David also occupy substantial space, particularly in the 10th edition.
+
+`SpaceRatioPerPage` vs. `ArtistGender`
+
+```{r gardnergender}
+#| echo: false
+ggplot(gardner, aes(x=ArtistGender, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Gardner by Gender",
+       x = "Gender",
+       y = "Ratio of Space per Page")
+
+gardner_female <- gardner %>%
+  filter(ArtistGender == "Female")
+
+gardner_female %>%
+  filter(SpaceRatioPerPage > .6)%>%
+  select(ArtistName, ArtistGender, EditionNumber, Year, SpaceRatioPerPage)%>%
+  arrange(desc(SpaceRatioPerPage))
+
+median(gardner_female$SpaceRatioPerPage)
+
+gardner_male <- gardner %>%
+  filter(ArtistGender == "Male")
+
+median(gardner_male$SpaceRatioPerPage)
+
+gardner_male1 <- gardner_male %>%
+  filter(SpaceRatioPerPage > 1)%>%
+  select(ArtistName, 
+         ArtistGender, 
+         EditionNumber, 
+         Year, 
+         SpaceRatioPerPage)%>%
+  arrange(desc(SpaceRatioPerPage))
+
+gardner_NAgender <- gardner %>%
+  filter(ArtistGender == "N/A")
+
+median(gardner_NAgender$SpaceRatioPerPage)
+
+```
+
+The median `SpaceRatioPerPage` for female artists is `r round(median(janson_female$SpaceRatioPerPage), 3)` is below the median for artists whose gender is unknown, `r median(gardner_NAgender$SpaceRatioPerPage)`, as well as the median for male artists `r round(median(gardner_male$SpaceRatioPerPage), 3)` in *Gardner's Art Through the Ages.* The number of artists whose gender is unknown has the fewest observations, `r nrow(gardner_NAgender)`, the number of female artists is slightly greater, `r nrow(gardner_female)`, and the amount of male artists through editions is, `r nrow(gardner_male)`. The only female artist that comes close to being larger than 1 for `SpaceRatioPerPage` is again Hannah Hoch, as seen by the table above. Male artists have a dramatic amount of outlying artists through editions over a `SpaceRatioPerPage` of 1, `r nrow(gardner_male1)`.
+
+`SpaceRatioPerPage` vs. `ArtistRace`
+
+```{r gardnerrace}
+#| echo: false
+ggplot(gardner, aes(x=ArtistRace, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Gardner by Race",
+       x = "Race",
+       y = "Ratio of Space per Page")+
+   theme(axis.text.x = element_text(angle = 45, size = 5))+
+  ylim(0, 2.0)
+
+gardner_NAA <- gardner%>%
+  filter(ArtistRace == "American Indian or Alaska Native")
+
+median(gardner_NAA$SpaceRatioPerPage)
+```
+
+What sticks out like a sore thumb in the visualization above is the significant number of outlying white artists. The only artists that have a `SpaceRatioPerPage` of 1 or more are white. Though all the medians of race range between .25 and .6, the highest median is that of American Indian or Alaska Native artists, `r median(gardner_NAA$SpaceRatioPerPage)` .
+
+`SpaceRatioPerPage` vs. `ArtistEthnicity`
+
+```{r gardnerethnicity}
+#| echo: false
+ggplot(gardner, aes(x=ArtistEthnicity, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Gardner by Ethnicity",
+       x = "Ethnicity",
+       y = "Ratio of Space per Page")
+```
+
+Across all three categories, Hispanic or Latinx, Not Hispanic or Latinx and N/A, the medians remain relatively similar. The tail for Hispanic or Latinx are comparable to the tail for Not Hispanic or Latinx, just simply the number of observations are far fewer.
+
+`SpaceRatioPerPage` vs. `ArtistNationalityOther`
+
+```{r gardnernationality}
+#| echo: false
+ggplot(gardner, aes(x=ArtistNationalityOther, y= SpaceRatioPerPage))+
+  geom_boxplot()+
+  labs(title = "Ratio of Space per Page per Artist per Edition in 
+       Gardner by Nationality",
+       x = "Nationality",
+       y = "Ratio of Space per Page")
+```

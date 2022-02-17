@@ -168,8 +168,8 @@ IQR(janson$SpaceRatioPerPage)
 
 janson%>%
   arrange(desc(SpaceRatioPerPage))%>%
-  select(ArtistName, EditionNumber, Year, SpaceRatioPerPage)%>%
-  filter(SpaceRatioPerPage >= 2)
+  filter(SpaceRatioPerPage >= 2)%>%
+  select(ArtistName, EditionNumber, Year, SpaceRatioPerPage)
 ```
 
 The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median to understand its center and IQR to understand its spread. The median of `SpaceRatioPerPage` in Janson is `r round(median(janson$SpaceRatioPerPage), 3)` and the IQR is `r round(IQR(janson$SpaceRatioPerPage), 3)`. There are potential outliers that are over 2.0, meaning the amount of space, area of text and area of figure in text combined is more than just the area of a single page within the respective book of *Janson's History of Art.* It is obvious to observe that Spanish painter, Pablo Picasso dominates space through all editions of Janson.
