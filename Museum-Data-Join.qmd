@@ -391,6 +391,8 @@ glance(gardnerjansonMLR)$r.squared
 
 ## Museums
 
+**NOTE: I think something is wrong with the museum join, take a look to see if you can debug, or we can look together. Very few records are being matched, which seems odd.**
+
 whitney eda
 
 ```{r whitneycounttodate}
