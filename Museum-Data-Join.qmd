@@ -108,6 +108,16 @@ gardner <- gardner %>%
 ```{r gardnerjanson}
 gardnerjanson <- gardner %>%
   bind_rows(janson)
+
+sumgj <- gardnerjanson %>%
+  group_by(artist_name, year)%>%
+  summarize(space_ratio_per_page_total = sum(space_ratio_per_page))
+
+gardnerjanson <- gardnerjanson%>%
+  left_join(sumgj)%>%
+  select(-space_ratio_per_page)%>%
+  unique()
+
 ```
 
 ------------------------------------------------------------------------
@@ -144,26 +154,35 @@ moma_complete_years <- moma %>%
   mutate(count = 1)%>%
   arrange(artist_name, year)%>%
   group_by(artist_name)%>%
+  ungroup() %>%
   complete(artist_name, year = c(min(year):max(year))) %>%
   mutate(
-    moma_count = if_else(is.na(count), 0, count),
-    moma_count_to_date = cumsum(count)
+    moma_count = if_else(is.na(count), 0, count)
     ) %>%
+  arrange(artist_name, year)%>%
+  group_by(artist_name)%>%
+  mutate(moma_count_to_date = cumsum(moma_count))%>%
+  ungroup()%>%
   select(artist_name, year, moma_count, moma_count_to_date)
+
 ```
 
 Create whitney with complete years
 
 ```{r whitneyexh}
-whitney_complete_years <- whitney %>%
+whitney_complete_years <- moma %>%
   mutate(count = 1)%>%
   arrange(artist_name, year)%>%
   group_by(artist_name)%>%
+  ungroup() %>%
   complete(artist_name, year = c(min(year):max(year))) %>%
   mutate(
-    whitney_count = if_else(is.na(count), 0, count),
-    whitney_count_to_date = cumsum(count)
+    whitney_count = if_else(is.na(count), 0, count)
     ) %>%
+  arrange(artist_name, year)%>%
+  group_by(artist_name)%>%
+  mutate(whitney_count_to_date = cumsum(whitney_count))%>%
+  ungroup()%>%
   select(artist_name, year, whitney_count, whitney_count_to_date)
 ```
 
@@ -198,9 +217,7 @@ summary(janson$space_ratio_per_page)
 median <- median(janson$space_ratio_per_page)
 ```
 
-The visualization above is right skewed, unimodal and assymetrical.
-Therefore, we would want to look at the median and IQR.
-The median of `space_ratio_per_page` in Janson is `r median`.
+The visualization above is right skewed, unimodal and assymetrical. Therefore, we would want to look at the median and IQR. The median of `space_ratio_per_page` in Janson is `r median`.
 
 space_ratio_per_page with Gender
 
