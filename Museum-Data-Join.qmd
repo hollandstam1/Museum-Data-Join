@@ -68,7 +68,6 @@ janson <- janson %>%
     "artist_name",
     "edition_number",
     "year",
-    "artist_unique_id",
     "artist_nationality",
     "artist_nationality_other",
     "artist_gender",
@@ -96,7 +95,6 @@ gardner <- gardner %>%
     "artist_name",
     "edition_number",
     "year",
-    "artist_unique_id",
     "artist_nationality",
     "artist_nationality_other",
     "artist_gender",
@@ -121,6 +119,10 @@ gardnerjanson <- gardnerjanson%>%
   left_join(sumgj)%>%
   select(-space_ratio_per_page)%>%
   unique()
+  
+gardnerjanson <- gardnerjanson %>%
+  group_by(artist_name)%>%
+  mutate(artist_unique_id = cur_group_id())
 
 ```
 
@@ -149,7 +151,7 @@ moma_complete_years <- moma %>%
 Create whitney with complete years
 
 ```{r whitneyexh}
-whitney_complete_years <- moma %>%
+whitney_complete_years <- whitney %>%
   count(artist_name, year)%>%
   mutate(count = 1)%>%
   arrange(artist_name, year)%>%
@@ -166,8 +168,6 @@ whitney_complete_years <- moma %>%
   select(artist_name, year, whitney_count, whitney_count_to_date)
 ```
 
-
-
 Join moma and whitney info to gardnerjanson
 
 **NOTE: I would expect gardnerjanson_museums to have the same number of rows as gardnerjanson, we should look into why that's not happening.**
@@ -178,13 +178,6 @@ This is occurring as there are some examples of an artists count of exhibitions 
 gardnerjanson_museums <- gardnerjanson %>%
   left_join(moma_complete_years, by = c("artist_name", "year")) %>%
   left_join(whitney_complete_years, by = c("artist_name", "year"))
-```
-
-Make clean Artist ID - alphabetical for all artists across books
-
-```{r artist-id}
-#The artist_unique_id is alphabetrical per book - I should standardize it so that it is alphabetical regardless of book 
-
 ```
 
 ```{r exhcatcolumnmoma}
@@ -199,9 +192,10 @@ gardnerjanson_museums <- gardnerjanson_museums %>%
          TRUE ~ '0'))
 
 ```
+
 # Exploratory data analysis
 
-## Bivariate Plots and MLR with space ratio
+## Bivariate Plots and MLR with `space_ratio_per_page_total`
 
 Janson:
 
@@ -433,7 +427,7 @@ whitney eda
 
 ```{r whitneycounttodate}
 ggplot(gardnerjanson_museums, aes(x = whitney_count_to_date)) +
-  geom_histogram() +
+  geom_histogram(binwidth = 1) +
   labs(
     title = "Distribution of Whitney Exhibitions per Artist per Edition",
     x = "Count to Date",
@@ -452,6 +446,9 @@ ggplot(gardnerjanson_museums, aes(x = whitney_count_to_date, y = space_ratio_per
   )
 
 #corr_coef
+  corr_coef_whitney <- cor(gardnerjanson_museums$whitney_count_to_date,     
+                           gardnerjanson_museums$space_ratio_per_page_total, 
+                           use = "complete.obs")
 ```
 
 ```{r whitneymomaheatmap}
@@ -469,7 +466,7 @@ moma eda
 
 ```{r momacounttodate}
 ggplot(gardnerjanson_museums, aes(x = moma_count_to_date)) +
-  geom_histogram() +
+  geom_histogram(binwidth = 1) +
   labs(
     title = "Distribution of MoMA Exhibitions per Artist per Edition",
     x = "Count to Date",
@@ -487,5 +484,7 @@ ggplot(gardnerjanson_museums, aes(x = moma_count_to_date, y = space_ratio_per_pa
     y = "Ratio of Space Per Artist Per Edition"
   )
 
-#corr_coef
+ corr_coef_moma <- cor(gardnerjanson_museums$moma_count_to_date,     
+                           gardnerjanson_museums$space_ratio_per_page_total, 
+                           use = "complete.obs")
 ```
