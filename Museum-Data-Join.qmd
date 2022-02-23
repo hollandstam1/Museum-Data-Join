@@ -105,8 +105,6 @@ gardner <- gardner %>%
   )
 ```
 
-**NOTE: I don't think we want these joined, we want them to be binded to each other. So I changed that.**
-
 ```{r gardnerjanson}
 gardnerjanson <- gardner %>%
   bind_rows(janson)
@@ -168,12 +166,6 @@ whitney_complete_years <- whitney %>%
   select(artist_name, year, whitney_count, whitney_count_to_date)
 ```
 
-Join moma and whitney info to gardnerjanson
-
-**NOTE: I would expect gardnerjanson_museums to have the same number of rows as gardnerjanson, we should look into why that's not happening.**
-
-This is occurring as there are some examples of an artists count of exhibitions per year
-
 ```{r museum-join}
 gardnerjanson_museums <- gardnerjanson %>%
   left_join(moma_complete_years, by = c("artist_name", "year")) %>%
@@ -194,6 +186,101 @@ gardnerjanson_museums <- gardnerjanson_museums %>%
 ```
 
 # Exploratory data analysis
+
+```{r jansonthroughtime}
+ggplot(gardnerjanson %>% filter(book == "janson"), aes(x = year))+
+  geom_bar()+
+  labs(title = "Overall Count of Artists in Janson's History of Art",
+       x = "Year of Publication",
+       y = "Count")
+  
+```
+
+```{r gardnerthroughtime}
+ggplot(gardnerjanson %>% filter(book == "gardner"), aes(x = year))+
+  geom_bar()+
+  labs(title = "Overall Count of Artists in Gardner's Art Through the Ages",
+       x = "Year of Publication",
+       y = "Count")
+  
+```
+
+```{r jansongenderthroughtime}
+ggplot(gardnerjanson %>% filter(book == "janson"), aes(x = year, fill = artist_gender))+
+  geom_bar(position = "fill")+
+  labs(title = "Gender of Artists in Janson's History of Art",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Gender")
+
+```
+
+```{r gardnergenderthroughtime}
+ggplot(gardnerjanson %>% filter(book == "gardner", artist_gender != "N/A"), aes(x = year, fill = artist_gender))+
+  geom_bar(position = "fill")+
+  labs(title = "Gender of Artists in Gardner's Art Through the Ages",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Gender")
+```
+
+```{r jansonracethroughtime}
+ggplot(gardnerjanson %>% filter(book == "janson"), aes(x = year, fill = artist_race))+
+  geom_bar(position = "fill")+
+  labs(title = "Race of Artists in Janson's History of Art",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Race")
+```
+
+```{r gardnerracethroughtime}
+ggplot(gardnerjanson %>% filter(book == "gardner", artist_race != "N/A"), aes(x = year, fill = artist_race))+
+  geom_bar(position = "fill")+
+  labs(title = "Race of Artists in Gardner's Art Through the Ages",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Race")
+
+```
+
+```{r jansonethnicitythroughtime}
+ggplot(gardnerjanson %>% filter(book == "janson"), aes(x = year, fill = artist_ethnicity))+
+  geom_bar(position = "fill")+
+  labs(title = "Ethnicity of Artists in Janson's History of Art",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Ethnicity")
+
+```
+
+```{r gardnerethnicitythroughtime}
+ggplot(gardnerjanson %>% filter(book == "gardner", artist_ethnicity != "N/A"), aes(x = year, fill = artist_ethnicity))+
+  geom_bar(position = "fill")+
+  labs(title = "Ethnicity of Artists in Gardner's Art Through the Ages",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Ethnicity")
+
+```
+
+```{r jansonnationalitythroughtime}
+ggplot(gardnerjanson %>% filter(book == "janson"), aes(x = year, fill = artist_nationality_other))+
+  geom_bar(position = "fill")+
+  labs(title = "Nationality of Artists in Janson's History of Art",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Nationality")
+
+```
+
+```{r gardnernationalitythroughtime}
+ggplot(gardnerjanson %>% filter(book == "gardner", artist_nationality_other != "N/A"), aes(x = year, fill = artist_nationality_other))+
+  geom_bar(position = "fill")+
+  labs(title = "Nationality of Artists in Gardner's Art Through the Ages",
+       x = "Year of Publication",
+       y = "Proportion",
+       fill = "Artist Nationality")
+```
 
 ## Bivariate Plots and MLR with `space_ratio_per_page_total`
 
